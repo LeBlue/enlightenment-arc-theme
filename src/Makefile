@@ -65,6 +65,8 @@ edc/notification_arc.edc \
 edc/sys_arc.edc \
 edc/syscon_arc.edc \
 edc/winlist_arc.edc \
+edc/init_arc.edc \
+
 
 IMG_ORIG_DIR=../orig-theme/img
 IMG_WHITENED=../assets/whitened

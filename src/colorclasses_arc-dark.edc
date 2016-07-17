@@ -71,6 +71,18 @@ color_classes {
       color: COL_BG;
       description: "Background color";
    }
+   color_class { name: "text";
+      color: FN_COL_DEFAULT_BASIC;
+      description: "Text color";
+   }
+   color_class { name: "text_highlight";
+      color: FN_COL_DEFAULT_BASIC_PRESSED;
+      description: "Text highlighted color";
+   }
+   color_class { name: "logo";
+      color: COL_PRESSED;
+      description: "logo in main theme color";
+   }
 // wm
    color_class { name: "win_border_title";
       color: COL_FONT_BASIC_DISABLED;

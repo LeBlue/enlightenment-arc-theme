@@ -1,0 +1,221 @@
+group { name: "e/init/splash";
+   images.image: "screen_circular_shadow.png" COMP;
+   images.image: "bg_radgrad.png" COMP;
+   images.image: "dot_pattern.png" COMP;
+   images.image: "logo_blue_small.png" COMP;
+   images.image: "logo_blue_small_glow.png" COMP;
+   IMAGE_SET("e-logo", 99, 134)
+
+   script {
+      public is_ready;
+      public do_end;
+   }
+   parts {
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+         }
+      }
+      // part { name: "bg"; type: GROUP;
+      //    source: "e/desktop/background";
+      //    description { state: "default" 0.0;
+      //    }
+      // }
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "background";
+         }
+      }
+      // part { name: "base"; mouse_events: 0;
+      //    description { state: "default" 0.0;
+      //       image.normal: "bg-rounded-3px.png";
+      //       image.border: 3 3 3 3;
+      //       image.middle: 1;
+      //       fill.smooth: 0;
+      //       rel.to: "logo";
+      //       color_class: "popup_bg";
+      //    }
+      // }
+      // part { name: "border"; mouse_events: 0;
+      //    description { state: "default" 0.0;
+      //       image.normal: "border-rounded-3px.png";
+      //       image.border: 3 3 3 3;
+      //       image.middle: 0;
+      //       fill.smooth: 0;
+      //       rel.to: "base";
+      //       color_class: "popup_border";
+      //    }
+      // }
+      rect { name: "knob"; mouse_events: 0; scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 5 0;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -5;
+            align: 0.0 1.0;
+            FIXED_SIZE(20, 20)
+         }
+      }
+      BUSY_SPINNER("knob_spinner", "knob", "knob", "show", "hide", "")
+      part { name: "logo"; type: IMAGE; scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "e-logo";
+            rel1.relative: 0.5 0.5;
+            rel2.relative: 0.5 0.5;
+            color_class: "logo";
+            FIXED_SIZE(99, 134)
+         }
+      }
+      part { name: "e.text.title"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.05 0.0;
+            rel1.offset: 4 -1;
+            rel1.to_y: "e.text.status";
+            rel2.relative: 0.95 0.0;
+            rel2.offset: -5 -1;
+            rel2.to_y: "e.text.status";
+            color_class: "text";
+            text { font: FNBD; size: 20;
+               min: 0 1;
+               text_class: "init_title";
+            }
+            fixed: 0 1;
+         }
+      }
+      part { name: "e.text.status"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.05 0.0;
+            rel1.to_y: "logo";
+            rel1.offset: 4 -1;
+            rel2.relative: 0.95 0.0;
+            rel2.offset: -5 -1;
+            rel2.to_y: "logo";
+            color_class: "text_highlight";
+            text { font: FN; size: 10;
+               min: 0 1;
+               text_class: "init_status";
+            }
+            fixed: 0 1;
+         }
+      }
+      part { name: "e.text.version"; type: TEXT;
+         description { state: "default" 0.0;
+            align: 1.0 1.0;
+            rel1.relative: 1.0 1.0;
+            rel1.offset: -4 -4;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -4  -4;
+            color_class: "text";
+            text { font: FN; size: 8;
+               text: "0.19";
+               min: 1 1;
+               ellipsis: -1;
+               align: 1.0 1.0;
+               text_class: "init_version";
+            }
+            fixed: 1 1;
+         }
+      }
+      
+      part { name: "blanker"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+      }
+   }
+  programs {
+     program {     
+        signal: "load"; source: "";
+        script {
+           set_int(is_ready, 0);
+           set_int(do_end, 0);
+        }
+     }   
+     program {
+        signal: "show"; source: "";
+        action: STATE_SET "visible" 0.0;
+        transition: DECELERATE 1.0;
+        // target: "shadow";
+        target: "blanker";
+        after: "ready";
+     }
+     program { name: "ready";
+        script {
+           new val;
+           val = get_int(do_end);
+           if (val == 1)
+             run_program(PROGRAM:"exit1");
+           else
+             set_int(is_ready, 1);
+        }
+     }
+     program {
+        signal: "e,state,done"; source: "e";
+        script {
+           new val;
+           val = get_int(is_ready);
+           if (val == 1)
+             run_program(PROGRAM:"exit1");
+           else
+             set_int(do_end, 1);
+        }
+     }
+     program { name: "exit1";
+        signal: "e,state,done"; source: "e";
+        action: STATE_SET "default" 0.0;
+        transition: SINUSOIDAL 1.0 CURRENT;
+        // target: "shadow";
+        target: "blanker";
+        after: "exit2";
+     }
+     program { name: "exit2";
+        action: SIGNAL_EMIT "e,state,done_ok" "e";
+     }
+  }
+}
+
+group { name: "e/init/extra_screen";
+   images.image: "screen_circular_shadow.png" COMP;
+   images.image: "bg_radgrad.png" COMP;
+   images.image: "dot_pattern.png" COMP;
+   parts {
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "background";
+         }
+      }
+
+      part { name: "blanker"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 0 0 0 255;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "show"; source: "";
+         action: STATE_SET "visible" 0.0;
+         transition: DECELERATE 1.0;
+         target: "blanker";
+      }
+   }
+}
