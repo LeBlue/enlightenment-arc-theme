@@ -97,12 +97,6 @@ IMAGE_SET("reload", 14, 14)
          after: "spin"; \
       } \
       program { \
-         signal: _SIG_START; source: _SIG_SRC; \
-         action: STATE_SET "active" 0.0; \
-         transition: SINUSOIDAL 0.25; \
-         target: _CLIP; \
-      } \
-      program { \
          signal: _SIG_STOP; source: _SIG_SRC; \
          action: STATE_SET "default" 0.0; \
          transition: SINUSOIDAL 1.0; \
@@ -119,3 +113,10 @@ IMAGE_SET("reload", 14, 14)
          action: STATE_SET "default" 0.0; \
          target: _NAME; \
       }
+
+      /*program { \
+         signal: _SIG_START; source: _SIG_SRC; \
+         action: STATE_SET "spin" 0.0; \
+         transition: SINUSOIDAL 0.25; \
+         target: _CLIP; \
+      } \ */
