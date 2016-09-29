@@ -72,11 +72,11 @@ color_classes {
       description: "Background color";
    }
    color_class { name: "text";
-      color: FN_COL_DEFAULT_BASIC;
+      color: COL_FONT_BASIC_DEFAULT;
       description: "Text color";
    }
    color_class { name: "text_highlight";
-      color: FN_COL_DEFAULT_BASIC_PRESSED;
+      color: COL_FONT_BASIC_PRESSED;
       description: "Text highlighted color";
    }
    color_class { name: "logo";
