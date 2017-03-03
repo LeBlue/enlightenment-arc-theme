@@ -354,6 +354,7 @@ group { name: "e/modules/everything/list";
             rel1.offset: 4 4;
             rel2.relative: 0.0 0.0;
             rel2.offset: 4 4;
+            color_class: "entry_text";
             text { font: FN; size: 10;
                align: 0.0 0.5;
                min: 1 1;
@@ -1299,7 +1300,7 @@ group { name: "e/modules/everything/thumbview/item/list";
 group { name: "e/modules/everything/textblock";
    styles {
       style { name: "everything_textblock_style";
-         base: "font="FN" font_size=10 text_class=tb_plain align=left color=#ffff style=shadow,bottom shadow_color=#00000080 wrap=word";
+         base: "font="FN" font_size=10 text_class=tb_plain align=left color="COL_FONT_BASIC_DEFAULT_HEX" wrap=word";
          tag: "br"      "\n";
          tag: "b"       "+ font="FNBD"";
          tag: "hilight" "+ font="FNBD" text_class=tb_light";
