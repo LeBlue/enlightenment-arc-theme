@@ -39,6 +39,7 @@ edc/pager16_arc.edc \
 edc/fileman_arc.edc \
 edc/toolbar_arc.edc \
 edc/background_arc.edc \
+edc/battery_arc.edc \
 edc/conf_arc.edc \
 edc/clock_arc.edc \
 edc/shelf_arc.edc \

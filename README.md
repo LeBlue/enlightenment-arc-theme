@@ -141,7 +141,7 @@ All assets are already exported as .png and included. inkscape and optipng are u
 
 * \[ ] appmenu
 * \[ ] backlight
-* \[ ] battery
+* \[x] battery
 * \[ ] bluez4
 * \[ ] clock
 * \[ ] colors

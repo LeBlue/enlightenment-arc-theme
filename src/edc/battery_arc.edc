@@ -1,0 +1,171 @@
+group { name: "e/modules/battery/main";
+   externals {
+         external: "elm";
+   }
+   min: 24 24;
+
+   script {
+     public global_charging_state;
+
+     public message(Msg_Type:type, id, ...)
+      {
+         if ((type != MSG_FLOAT) || (id != 1))
+            return;
+
+         new base_icon_name[200];
+         new full_icon_name[256];
+         new Float:val;
+         val = getfarg(2);
+
+         if (val < 0.05) {
+            snprintf(base_icon_name, sizeof(base_icon_name), "%s", "battery-empty");
+         } else if (val < 0.10) {
+            snprintf(base_icon_name, sizeof(base_icon_name), "%s", "battery-caution");
+         } else if (val < 0.5) {
+            snprintf(base_icon_name, sizeof(base_icon_name), "%s", "battery-low");
+         } else if (val < 0.98) {
+            snprintf(base_icon_name, sizeof(base_icon_name), "%s", "battery-good");
+         } else {
+            snprintf(base_icon_name, sizeof(base_icon_name), "%s", "battery-full");
+         }
+
+         if (get_int(global_charging_state) == 1) {
+            snprintf(full_icon_name, sizeof(full_icon_name), "%s-charging-symbolic", base_icon_name);
+         } else {
+            snprintf(full_icon_name, sizeof(full_icon_name), "%s-symbolic", base_icon_name);
+         }
+
+         external_param_set_str(PART:"elm.icon", "icon", full_icon_name);
+      }
+   }
+   parts {
+
+      part { name: "elm.icon"; type: EXTERNAL;
+         source: "elm/icon";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+         }
+      }
+      part { name: "info_clip"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "e.text.reading"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         clip_to: "info_clip";
+         description { state: "default" 0.0;
+            align: 0.5 0.0;
+            rel2.relative: 1.0 0.5;
+            color: COL_FONT_BASIC_DEFAULT;
+            text { font: FN;
+               fit: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+         }
+      }
+      part { name: "e.text.time"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         clip_to: "info_clip";
+         description { state: "default" 0.0;
+            align: 0.5 1.0;
+            rel1.relative: 0.0 0.5;
+            color: COL_FONT_BASIC_DEFAULT;
+            text { font: FN;
+               fit: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+            }
+         }
+      }
+      part { name: "over"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,in"; source: "over";
+         action: STATE_SET "visible" 0.0;
+         transition: LINEAR 0.3;
+         target: "info_clip";
+      }
+      program {
+         signal: "mouse,out"; source: "over";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.3;
+         target: "info_clip";
+      }
+      program {
+         signal: "e,state,charging"; source: "e";
+         action: STATE_SET "visible" 0.0;
+         script {
+            set_int(global_charging_state, 1);
+         }
+      }
+      program {
+         signal: "e,state,discharging"; source: "e";
+         action: STATE_SET "default" 0.0;
+         script {
+            set_int(global_charging_state, 0);
+         }
+      }
+      program {
+         signal: "e,state,unknown"; source: "e";
+         action: STATE_SET "faded" 0.0;
+         script {
+            send_message(MSG_STRING_SET, 0xfd0, "e.swallow.icon", "battery-missing");
+         }
+      }
+   }
+}
+
+group { name: "e/modules/battery/popup";
+   min: 240 60;
+   parts {
+      part { name: "e.swallow.battery"; type: SWALLOW;
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            min: 1 1;
+            max: 160 160;
+            align: 0.0 0.5;
+         }
+      }
+      part { name: "e.text.title"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "e.swallow.battery";
+            rel2.relative: 1.0 0.5;
+            color: COL_FONT_BASIC_DEFAULT;
+            text { font: "Sans:style=Bold"; size: 10;
+               text: "Your battery is low!";
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "module_large";
+            }
+         }
+      }
+      part { name: "e.text.label"; type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 1.0 0.5;
+            rel1.to_x: "e.swallow.battery";
+            color: COL_FONT_BASIC_DEFAULT;
+            text { font: "Sans"; size: 10;
+               text: "AC power is recommended.";
+               min: 1 1;
+               ellipsis: -1;
+               text_class: "module_normal";
+            }
+         }
+      }
+   }
+}
